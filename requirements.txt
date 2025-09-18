@@ -1,0 +1,5 @@
+sounddevice 
+webrtcvad 
+numpy 
+vosk 
+faster-whisper
