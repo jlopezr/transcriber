@@ -117,24 +117,46 @@ def transcribe_with_vosk(model, pcm_bytes):
         return ""
 
 def transcribe_with_whisper(model, pcm_bytes, language="auto"):
-    # Convertimos a float32 -1..1
+    import re
+    import numpy as np
+
+    # 1) Convertir a float32 -1..1
     audio = np.frombuffer(pcm_bytes, dtype=np.int16).astype(np.float32) / 32768.0
-    # Nota: faster-whisper acepta arrays numpy directamente
-    # Config: sin timestamps para mostrar texto sencillo
+
+    # 2) Decodificación más “conservadora”
     segments, info = model.transcribe(
         audio,
         language=None if language == "auto" else language,
-        vad_filter=False,  # ya usamos VAD externo
+        vad_filter=False,                  # ya usamos VAD externo
         word_timestamps=False,
-        beam_size=5,
-        best_of=5
+        without_timestamps=True,           # reduce “narrativa” de cierre
+        condition_on_previous_text=False,  # evita arrastrar coletillas
+        temperature=0.0,                   # greedy: menos inventos
+        beam_size=5,                       # (se ignora con temp=0, ok)
+        best_of=1,
+        no_speech_threshold=0.7,           # más sensible a “no hay voz”
+        log_prob_threshold=-1.0,           # descarta segmentos de baja confianza
+        compression_ratio_threshold=2.4,   # filtra texto repetitivo
+        suppress_blank=True,
+        # Nota: también puedes pasar suppress_tokens para suprimir tokens musicales, etc.
     )
-    # 'segments' es un generador; concatenamos
-    text_parts = []
-    for s in segments:
-        # s.text ya viene con espacios adecuados
-        text_parts.append(s.text.strip())
-    return " ".join(tp for tp in text_parts if tp)
+
+    text_parts = [s.text.strip() for s in segments if s.text.strip()]
+    text = " ".join(text_parts)
+
+    # 3) Post-filtro de coletillas comunes (puedes ampliarlo)
+    BLACKLIST_PATTERNS = [
+        r"¡Suscríbete!",
+        r"Subt[ií]tulos\s+en\s+español\s+de\s+Amara.org",
+        r"Subt[ií]tulos\s+por\s+la\s+comunidad\s+de\s+Amara.org"
+    ]
+    for pat in BLACKLIST_PATTERNS:
+        text = re.sub(pat, "", text, flags=re.IGNORECASE).strip()
+
+    # limpia espacios dobles tras borrar coletillas
+    text = re.sub(r"\s{2,}", " ", text)
+
+    return text
 
 def main():
     parser = argparse.ArgumentParser(description="Transcripción por voz en consola con VAD (Vosk o Whisper).")
