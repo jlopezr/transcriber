@@ -33,19 +33,19 @@ Busca Spanish y descarga, por ejemplo:
 Descomprime el .zip. Te quedará una carpeta con archivos como am, conf, ivector, etc.
 
 ```bash
-python .\main.py --engine vosk --vosk-model .\vosk-model-es-0.42\
+python .\transcribe.py --engine vosk --vosk-model .\vosk-model-es-0.42\
 ```
 
 ## 🚀 Whisper (faster-whisper)
 
 ```bash
-python .\main.py --engine whisper --whisper-model small --language es
+python .\transcribe.py --engine whisper --whisper-model small --language es
 ```
 
 Si no pone el parámetro `--language`, se intenta detecta automáticamente.
 
 ```bash
-python .\main.py --engine whisper --whisper-model small --language es --device cuda
+python .\transcribe.py --engine whisper --whisper-model small --language es --device cuda
 ```
 
 Para forza el uso de CUDA.
