@@ -1,4 +1,4 @@
-# 🎤 Transcribe CLI
+## 🎤 Transcriber
 
 Aplicación de consola multiplataforma para **transcribir voz en tiempo real** desde el micrófono.  
 Permite elegir entre dos motores:
@@ -10,16 +10,7 @@ Incluye **detección de voz (VAD)** con [`webrtcvad`](https://github.com/wiseman
 
 ---
 
-## ✨ Características
-
-- Multiplataforma: Linux, macOS y Windows.  
-- Selección de motor (`vosk` o `whisper`).  
-- Soporte para **VAD configurable** (agresividad y duración del silencio).  
-- Elección de micrófono por índice.  
-- Guardado opcional de las frases en archivo de texto.  
-- Compatible con GPU (CUDA en NVIDIA, Metal en macOS) al usar Whisper.
-
-## 🚀 Vosk
+### 🚀 Vosk
 
 1. Descargar un modelo de Vosk en español
 
@@ -36,7 +27,7 @@ Descomprime el .zip. Te quedará una carpeta con archivos como am, conf, ivector
 python .\transcribe.py --engine vosk --vosk-model .\vosk-model-es-0.42\
 ```
 
-## 🚀 Whisper (faster-whisper)
+### 🚀 Whisper (faster-whisper)
 
 ```bash
 python .\transcribe.py --engine whisper --whisper-model small --language es
@@ -50,3 +41,27 @@ python .\transcribe.py --engine whisper --whisper-model small --language es --de
 
 Para forza el uso de CUDA.
 
+## Assistant
+
+Utiliza el modelo de lenguaje Gema-3-27B instalado localmente.
+
+### Prerequisitos
+
+Arrancar el servidor de Gema-3-27B con LM Studio.
+
+```bash
+# Paso 1: descargar el modelo (usa la variante cuantizada si tu hardware es limitado)
+lms get gemma-3-27b-it --yes
+
+# Paso 2: cargar el modelo en memoria con un identificador, permitiendo GPU si está disponible
+lms load gemma-3-27b-it
+
+# Paso 3: arrancar el servidor API
+lms server start
+```
+
+### Uso
+
+```bash
+python .\assistant.py
+```
