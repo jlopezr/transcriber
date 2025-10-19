@@ -69,3 +69,8 @@ python .\assistant.py
 ```bash
 conda install pytorch pytorch-cuda=12.1 -c pytorch -c nvidia
 ```
+
+# Networking con Unity
+
+- https://mirror-networking.com/
+- WEBRTC
