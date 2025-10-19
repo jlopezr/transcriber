@@ -65,3 +65,7 @@ lms server start
 ```bash
 python .\assistant.py
 ```
+
+```bash
+conda install pytorch pytorch-cuda=12.1 -c pytorch -c nvidia
+```

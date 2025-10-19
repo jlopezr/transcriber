@@ -6,3 +6,6 @@ faster-whisper
 
 openai>=1.40.0
 python-dotenv>=1.0.1
+
+TTS>=0.22.0
+soundfile
